@@ -1,0 +1,35 @@
+version: '3.9'
+
+services:
+  back:
+    container_name: anki-backend
+    build:
+      dockerfile: Backend/Dockerfile
+      context: .
+    ports:
+      - '18000:18000'
+    volumes:
+      - type: bind
+        source: ./Backend/src
+        target: ~/
+  db:
+    container_name: anki-database
+    build:
+      dockerfile: Database/Dockerfile
+      context: .
+    command: -c 'config_file=/etc/postgresql/postgresql.conf'
+    volumes:
+      - type: volume
+        source: anki-db-store
+        target: /var/lib/postgresql/data
+      - type: bind
+        source: ./Database/init
+        target: /docker-entrypoint-initdb.d
+      - type: bind
+        source: ./config/postgresql.config
+        target: /etc/postgresql/postgresql.conf
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+
+volumes:
+  anki-db-store:
