@@ -1,18 +1,19 @@
 version: '3.9'
 
 services:
-  front:
-    container_name: anki-front
+  db:
+    container_name: anki-database
     build:
-      dockerfile: anki-Frontend/Dockerfile
+      dockerfile: Database/Dockerfile
       context: .
+    ports:
+      - 5432:5432
     volumes:
-      - type: bind
-        source: ./anki-Frontend
-        target: ~/
       - type: volume
-        source: front_node_modules
-        target: ~/node_modules
+        source: anki-db-store
+        target: /var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
 
 volumes:
-  front_node_modules:
+  anki-db-store:
