@@ -30,6 +30,19 @@ services:
         target: /etc/postgresql/postgresql.conf
     environment:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+  front:
+    container_name: anki-front
+    build:
+      dockerfile: anki-Frontend/Dockerfile
+      context: .
+    volumes:
+      - type: bind
+        source: ./anki-Frontend
+        target: ~/
+      - type: volume
+        source: front_node_modules
+        target: ~/node_modules
 
 volumes:
   anki-db-store:
+  front_node_modules:
